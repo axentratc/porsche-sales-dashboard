@@ -1,0 +1,26 @@
+import fs from 'node:fs';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+const html=fs.readFileSync(new URL('./index.html',import.meta.url),'utf8');
+const json=html.match(/<script id="data" type="application\/json">([\s\S]*?)<\/script>/)[1];
+const script=html.match(/<script>\s*([\s\S]*?)<\/script>/)[1];
+const elements=new Map();
+function element(id){if(!elements.has(id))elements.set(id,{value:id==='status'?'active':'',textContent:id==='data'?json:'',innerHTML:'',children:[],events:{},add(){},append(x){this.children.push(x)},replaceChildren(){this.children=[]},setAttribute(){},addEventListener(k,fn){this.events[k]=fn}});return elements.get(id);}
+const context=vm.createContext({document:{getElementById:element,createElement:()=>({setAttribute(){},addEventListener(){}})},Option:function(){},Intl,Map,Set,Blob,URL,setTimeout});
+vm.runInContext(script,context);
+const run=code=>vm.runInContext(code,context);
+assert.equal(run('shownRows.length'),93);
+assert.equal(run('shownRows.reduce((s,r)=>s+r.cents,0)'),1220255050);
+assert.equal(run('DATA.length'),100);
+assert.equal(run('DATA.filter(r=>!r.date).length'),24);
+assert.equal(run('DATA.reduce((s,r)=>s+r.cents,0)'),1282780050);
+for(const key of ['model','city','payment'])assert.equal(run(`aggregate(shownRows,'${key}','value').reduce((s,r)=>s+r[1],0)`),1220255050);
+element('status').value='';run('render()');assert.equal(run('shownRows.length'),100);
+element('saleYear').value='invalid';run('render()');assert.equal(run('shownRows.length'),24);
+element('saleYear').value='2024';run('render()');assert.equal(run('shownRows.every(r=>r.date.startsWith("2024"))'),true);
+element('model').value='718 Cayman';element('city').value='Boston';element('saleYear').value='invalid';run('render()');assert.equal(run('shownRows.length'),1);assert.equal(run('shownRows[0].cents'),7950000);
+element('city').value='Seattle';run('render()');assert.equal(run('shownRows.length'),0);assert.equal(element('ticket').textContent,'—');assert.equal(element('export').disabled,true);
+element('reset').events.click();assert.equal(run('shownRows.length'),93);
+const csv=run('csvText(shownRows)');assert.equal(csv.split('\r\n').length,94);assert.ok(!csv.includes('customer_name'));
+assert.ok(!html.includes('src="https://'));assert.ok(!html.includes('__DATA__'));
+console.log('PASS: totals, reconciliation, invalid dates, year scope, combined filters, empty state, reset, CSV and standalone HTML.');

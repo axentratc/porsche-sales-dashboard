@@ -1,0 +1,38 @@
+# Porsche — Panorama de vendas
+
+Dashboard educacional para o desafio DIO. HTML único com CSS, JavaScript e dados incorporados, sem CDN ou dependências para uso. Abra `index.html` no navegador, inclusive offline.
+
+## Perguntas de negócio
+
+1. Quais modelos geram mais valor em vendas? Ranking pelo preço acumulado, com top 8 e expansão para todos.
+2. Quais cidades concentram mais vendas? Ranking pela quantidade de operações, com tratamento explícito dos empates.
+3. Como os clientes pagam? Quantidade e participação de cada método no recorte.
+
+Filtros: modelo, cidade, ano da venda, ano do modelo, pagamento e status. Barras também filtram os dados. Indicadores: valor de vendas, operações, ticket médio e cidades. Tabela e CSV acompanham todos os filtros.
+
+## Fonte e metodologia
+
+[Planilha base Porsche](https://hermes.dio.me/files/assets/8683bed0-cc33-4e06-bca9-04db9c31f9e2.xlsx), aba `Sanitized`. Base educacional estática com 100 registros e identificadores únicos. Uso dos campos sanitizados e ID, sem nomes de clientes ou vendedores. Nenhuma fórmula na origem. Anos convertidos para inteiros e preços para centavos inteiros de USD, preservando precisão nas somas. A base sanitizada está em `base-sanitizada.csv`, sem fórmulas.
+
+- 24 datas inválidas: mantidas como ausentes, sem estimar datas. Entram nos totais e na opção “Sem data válida”; ficam fora de anos específicos.
+- 7 cancelamentos: excluídos por padrão, acessíveis no filtro de status.
+- Total bruto, com cancelamentos: **US$ 12.827.800,50 / 100 operações**.
+- Total inicial, sem cancelamentos: **US$ 12.202.550,50 / 93 operações**.
+- A base contém datas até 2027. Não são dados oficiais nem acompanhamento em tempo real.
+- Valor de vendas é preço somado, incluindo pendências, e não receita contábil reconhecida. Ticket médio = soma / operações.
+- Wire Transfer e Bank Transfer permanecem categorias distintas conforme a origem.
+
+Visual: grafite `#14161b`, vermelho `#c51d35`, fundo claro `#f3f4f6`; fonte de sistema Segoe UI/Arial, sem downloads. Layout adaptável e controles acessíveis por teclado.
+
+## Reproduzir
+
+1. Baixe a fonte como `base-porsche.xlsx` nesta pasta.
+2. Com Python e openpyxl disponíveis, execute `python prepare.py` para validar os tipos, exportar os dados e gerar `index.html` a partir do template.
+3. Execute `node test.mjs` para conferir totais, reconciliação, filtros, datas inválidas, estado vazio, restauração e exportação CSV.
+4. Publique a raiz do repositório no GitHub Pages, branch `main`.
+
+O arquivo `index.html` é o produto final independente; os demais arquivos permitem reproduzir e auditar o trabalho.
+
+## Prompt para reproduzir no Canvas
+
+Crie um dashboard em um único index.html, sem dependências externas, usando os dados sanitizados anexados. Use somente campos sanitizados e o ID; converta preço USD para centavos inteiros e ano do modelo para número. Não invente datas: mantenha as inválidas sem data. Exclua canceladas por padrão, permitindo incluí-las pelo filtro de status. Responda com gráficos: quais modelos geram mais valor de vendas, quais cidades concentram mais operações e qual a participação dos métodos de pagamento. Inclua filtros combináveis por modelo, cidade, ano da venda, ano do modelo, pagamento e status; indicadores de valor de vendas, operações, ticket médio e cidades; tabela e exportação CSV do mesmo recorte; estado vazio e limpeza dos filtros. Use grafite, branco e vermelho com Segoe UI/Arial, layout responsivo e acessibilidade. Explique que valor de vendas não equivale a receita contábil e que a base é educacional, estática e inclui datas até 2027. Preserve categorias de pagamento da fonte. Não publique nomes de clientes e vendedores.
