@@ -2,11 +2,17 @@
 
 Dashboard educacional para o desafio DIO. HTML único com CSS, JavaScript e dados incorporados, sem CDN ou dependências para uso. Abra `index.html` no navegador, inclusive offline.
 
+**[Abrir dashboard publicada](https://axentratc.github.io/porsche-sales-dashboard/)** · [Repositório público](https://github.com/axentratc/porsche-sales-dashboard)
+
+![Visão geral da dashboard](docs/visao-geral.png)
+
 ## Perguntas de negócio
 
 1. Quais modelos geram mais valor em vendas? Ranking pelo preço acumulado, com top 8 e expansão para todos.
 2. Quais cidades concentram mais vendas? Ranking pela quantidade de operações, com tratamento explícito dos empates.
 3. Como os clientes pagam? Quantidade e participação de cada método no recorte.
+
+As perguntas conectam produto, presença geográfica e condições de pagamento. O valor por modelo ajuda a entender a composição comercial; a quantidade por cidade mostra onde as operações se concentram; a participação por pagamento permite comparar o uso dos métodos. São descrições da amostra, não recomendações de estoque nem conclusões sobre o mercado real. Barras horizontais permitem comparar categorias e ler nomes longos; todos os rankings começam em zero.
 
 Filtros: modelo, cidade, ano da venda, ano do modelo, pagamento e status. Barras também filtram os dados. Indicadores: valor de vendas, operações, ticket médio e cidades. Tabela e CSV acompanham todos os filtros.
 
@@ -23,6 +29,28 @@ Filtros: modelo, cidade, ano da venda, ano do modelo, pagamento e status. Barras
 - Wire Transfer e Bank Transfer permanecem categorias distintas conforme a origem.
 
 Visual: grafite `#14161b`, vermelho `#c51d35`, fundo claro `#f3f4f6`; fonte de sistema Segoe UI/Arial, sem downloads. Layout adaptável e controles acessíveis por teclado.
+
+A referência visual é o [site oficial da Porsche Brasil](https://www.porsche.com/brazil/pt/): contraste entre superfícies escuras e claras, tipografia sem serifa, títulos de destaque e espaço entre elementos. A composição foi adaptada à leitura analítica, com vermelho para destaque e cores distintas nos gráficos. Não usa fontes proprietárias, fotos, vídeos ou logotipo oficial e não tem vínculo com a Porsche.
+
+## Caminho utilizado e evolução do prompt
+
+Esta entrega foi concluída com **agente Codex e skills de planilhas e dashboards**, reaproveitando e validando a implementação existente no workspace. Não foi executada uma sessão do ChatGPT Canvas; portanto, não se apresenta uma comparação experimental entre os dois caminhos. O prompt abaixo permite reproduzir o trabalho no Canvas ou em outro agente.
+
+O briefing de entrada pediu um HTML único, três perguntas escolhidas pelo agente, filtros, indicadores, referência visual Porsche e publicação no GitHub Pages. O prompt consolidado abaixo incorpora as decisões da base: moeda USD, datas inválidas, cancelamentos, diferença entre ano da venda e do veículo e a distinção entre valor de vendas e receita reconhecida. Ele é uma especificação reprodutível, não uma transcrição de uma sessão de Canvas.
+
+Na revisão final, foram conferidos os dados contra um novo download da fonte (mesmo SHA-256), acrescentados o total exato abaixo do indicador compacto e o link para código/metodologia, e completada a documentação com evidências. Os 100 registros foram preservados; o padrão de 93 é um filtro, não exclusão de linhas da base.
+
+## Evidência de funcionamento
+
+Selecione **Modelo → 911 Dakar**, mantendo **Status → Sem canceladas**. O resultado é **3 operações**, **US$ 810.600,00**, ticket médio de **US$ 270.200,00** e **3 cidades**. Gráficos, tabela e CSV usam o mesmo recorte. Uma dessas operações não tem data válida.
+
+![Exemplo de filtro aplicado: 911 Dakar](docs/filtro-911-dakar.png)
+
+Validações executadas: `node test.mjs` confere os totais, reconciliação dos agrupamentos, datas inválidas, filtro por ano, filtros combinados, estado vazio, restauração, CSV e HTML independente. No navegador, foram conferidos visão geral, filtro 911 Dakar e combinação sem resultados (911 Dakar + Boston), sem erros ou avisos no console durante essa verificação. As capturas mostram a página em execução, não mockups.
+
+## Publicação
+
+GitHub Pages configurado para a branch `main`, pasta `/`, com HTTPS. O arquivo de entrada é `index.html`. Não há backend, login, banco de dados ou dependência de Excel no navegador. Os dados ficam incorporados ao HTML; atualizar a planilha exige regenerar o arquivo e publicar um novo commit.
 
 ## Reproduzir
 

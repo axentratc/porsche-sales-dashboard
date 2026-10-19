@@ -26,7 +26,7 @@
 </div></section>
 <div class="scope"><p id="scope" role="status" aria-live="polite"></p><span>Valores nominais em dólares americanos</span></div>
 <section class="kpis" aria-label="Indicadores do recorte">
-<article class="kpi primary"><div class="k-label">Valor de vendas · USD</div><div class="k-value" id="revenue"></div><div class="k-note">Soma dos preços no recorte</div></article>
+<article class="kpi primary"><div class="k-label">Valor de vendas · USD</div><div class="k-value" id="revenue"></div><div class="k-note" id="revenue-exact"></div></article>
 <article class="kpi"><div class="k-label">Vendas registradas</div><div class="k-value" id="count"></div><div class="k-note">Uma operação por registro</div></article>
 <article class="kpi"><div class="k-label">Ticket médio · USD</div><div class="k-value" id="ticket"></div><div class="k-note">Valor de vendas ÷ operações</div></article>
 <article class="kpi"><div class="k-label">Cidades atendidas</div><div class="k-value" id="cities"></div><div class="k-note">Cidades distintas no recorte</div></article>
@@ -40,7 +40,7 @@
 <div class="notice" id="notice"></div>
 <details class="details"><summary>Consultar registros do recorte</summary><div class="detail-head"><span>Os mesmos filtros dos indicadores e gráficos.</span><button id="export">↓ Exportar CSV</button></div><div class="table-wrap"><table><caption class="sr-only">Operações filtradas, valores em dólares americanos</caption><thead><tr><th>ID</th><th>Data da venda</th><th>Modelo</th><th>Ano modelo</th><th>Cidade / UF</th><th>Pagamento</th><th>Status</th><th class="money">Preço · USD</th></tr></thead><tbody id="records"></tbody></table></div></details>
 <details class="methods"><summary>Fonte, tratamento e definições</summary><p>Fonte: <a href="https://hermes.dio.me/files/assets/8683bed0-cc33-4e06-bca9-04db9c31f9e2.xlsx">Planilha base Porsche — DIO</a>, aba Sanitized, 100 operações. Projeto educacional; não representa um relatório oficial da Porsche. Base estática, sem atualização automática.</p><p>Usamos exclusivamente os campos sanitizados e o identificador da operação. Preços são calculados em centavos de USD; ano do modelo é numérico. Nomes de clientes e vendedores não são publicados. Datas inválidas permanecem sem data; não foram estimadas. A base inclui datas até 2027, inclusive posteriores à elaboração deste projeto.</p><p>O padrão exclui 7 operações canceladas. O filtro de status permite incluí-las ou analisar apenas entregas concluídas. Valor de vendas é a soma dos preços das operações selecionadas, incluindo pendentes: não equivale a receita contábil reconhecida ou caixa recebido. Ticket médio é essa soma dividida pela quantidade de registros.</p><p>O ano da venda é extraído da data válida; o ano do modelo é um campo independente. As categorias de pagamento são mantidas como na origem, incluindo Wire Transfer e Bank Transfer separadamente. Empates nos rankings são ordenados alfabeticamente. Todos os indicadores, gráficos, registros e exportação usam o mesmo recorte.</p></details>
-<footer><span>PORSCHE · Estudo de vendas / DIO</span><span>HTML único · Funciona também offline</span></footer>
+<footer><span>PORSCHE · Estudo independente / DIO</span><span><a href="https://github.com/axentratc/porsche-sales-dashboard">Código e metodologia ↗</a> · HTML único, também offline</span></footer>
 </main><div id="toast" class="toast" role="status" hidden></div>
 <script id="data" type="application/json">__DATA__</script>
 <script>
@@ -69,7 +69,7 @@ function bars(target,items,key,format,limit){
 function render(){
  shownRows=filterRows(DATA,selection());const count=shownRows.length,sum=shownRows.reduce((a,r)=>a+r.cents,0),missing=shownRows.filter(r=>!r.date).length;
  el('scope').textContent=number(count)+' de '+DATA.length+' operações · '+(el('status').value==='active'?'canceladas excluídas':el('status').value?label('status',el('status').value):'inclui todos os status');
- el('revenue').textContent=shortUSD(sum);el('revenue').title=usd(sum);el('revenue').setAttribute('aria-label',usd(sum));el('count').textContent=number(count);el('ticket').textContent=count?shortUSD(sum/count):'—';el('ticket').title=count?usd(sum/count):'Sem operações';el('cities').textContent=number(new Set(shownRows.map(r=>r.city+'|'+r.state)).size);
+ el('revenue').textContent=shortUSD(sum);el('revenue-exact').textContent=usd(sum)+' · total exato';el('revenue').title=usd(sum);el('revenue').setAttribute('aria-label',usd(sum));el('count').textContent=number(count);el('ticket').textContent=count?shortUSD(sum/count):'—';el('ticket').title=count?usd(sum/count):'Sem operações';el('cities').textContent=number(new Set(shownRows.map(r=>r.city+'|'+r.state)).size);
  const models=aggregate(shownRows,'model','value'),cities=aggregate(shownRows,'city','count'),payments=aggregate(shownRows,'payment','count');
  bars('models',models,'model',shortUSD,allModels?Infinity:8);bars('city-chart',cities,'city',n=>number(n)+(n===1?' venda':' vendas'),allCities?Infinity:8);bars('payments',payments,'payment',n=>number(n)+' · '+pct(n/count),Infinity);
  el('model-note').textContent=count?(allModels?'Todos os '+models.length+' modelos.':'Top '+Math.min(8,models.length)+' de '+models.length+' modelos.')+' Participação do líder: '+pct(models[0][1]/sum)+'.':'Sem dados para comparar.';

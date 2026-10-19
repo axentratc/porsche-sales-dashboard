@@ -2,3 +2,4 @@ base-porsche.xlsx
 data.json
 __pycache__/
 *.png
+!docs/*.png
